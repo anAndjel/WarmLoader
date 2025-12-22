@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -6,13 +7,26 @@
 #include <sys/inotify.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
+inline std::string red(const std::string &msg) {
+  return "\033[1;31m" + msg + "\033[0m";
+}
 namespace fs = std::filesystem;
+
+void add_watch_recursive(int fd, const fs::path &root, uint32_t mask) {
+  for (const auto &entry : fs::recursive_directory_iterator(root)) {
+    if (entry.is_directory()) {
+      inotify_add_watch(fd, entry.path().c_str(), mask);
+    }
+  }
+
+  inotify_add_watch(fd, root.c_str(), mask);
+}
 
 int main(int argc, char **argv) {
   if (argc < 2) {
-    std::cout << "[WarmLoader] Incorrect Usage!\n";
-    std::cout << "      Usage: warmload <file|dir>\n";
+    std::cout << red("[WarmLoader] Incorrect Usage!\n");
+    std::cout << "      Usage: warmload <file|dir> --build <cmd> "
+                 "--run <cmd>\n";
     return 1;
   }
 
@@ -33,15 +47,19 @@ int main(int argc, char **argv) {
   fs::path target = argv[1];
 
   if (!fs::exists(target)) {
-    std::cerr << "[WarmLoader] Path does not exist!\n";
+    std::cerr << red("[WarmLoader] Path does not exist!\n");
     return 1;
   }
 
   int fd = inotify_init1(IN_NONBLOCK);
+  uint32_t mask = IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVED_TO;
+  if (fs::is_directory(target)) {
+    add_watch_recursive(fd, target, mask);
+  } else {
+    int wd = inotify_add_watch(fd, target.parent_path().c_str(), IN_MODIFY);
+  }
 
-  int wd = inotify_add_watch(fd, target.parent_path().c_str(), IN_MODIFY);
-
-  std::cout << "[WarmLoader] Watching: " << target << '\n';
+  std::cout << red("[WarmLoader] ") << "Watching: " << target << '\n';
 
   char buf[4096];
   using clock = std::chrono::steady_clock;
@@ -59,21 +77,26 @@ int main(int argc, char **argv) {
                      clock::now() - last)
                          .count() > 300) {
       dirty = false;
-      std::cout << "[WarmLoader] Stable change detected!\n";
-      std::cout << "[WarmLoader] Building...\n";
-      system("echo BUILD");
+      std::cout << red("[WarmLoader] ") << "Change detected!\n";
+      std::cout << red("[WarmLoader] ") << "Building...\n";
       if (running_pid > 0) {
         kill(running_pid, SIGTERM);
         waitpid(running_pid, nullptr, 0);
       }
       int code = system(build_cmd.c_str());
       if (code != 0) {
-        std::cout << "[WarmLoader] Build failed boohoo :(\n";
+        std::cerr << red("[WarmLoader] Build failed boohoo :(\n");
         return 1;
       }
       pid_t pid = fork();
-      if (pid == 0) {
+      if (pid >= 0) {
+        running_pid = pid;
+        std::cout << red("[WarmLoader] ") << "Running...\n";
         execl("/bin/sh", "sh", "-c", run_cmd.c_str(), nullptr);
+      }
+      if (running_pid <= 0) {
+        std::cerr << red("[WarmLoader] Running failed boohoo :(\n");
+        return 1;
       }
     }
     usleep(100000); // 100ms

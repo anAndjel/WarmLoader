@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd /home/alex/coding/WarmLoader || exit 1
+
 set -e
 
 mkdir -p build
