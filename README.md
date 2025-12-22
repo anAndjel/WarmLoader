@@ -10,19 +10,36 @@
 - 🟡 **Debounced changes** – avoids multiple rebuilds on rapid edits  
 - 🔹 Works with **custom build and run commands** (`--build`, `--run`)  
 - 🔹 **Directory or file watching** (supports recursive watching)  
-- 🔹 Lightweight C++ CLI – no Node.js, Python, or extra deps  
+- 🔹 Blazzing fast lightweight C++ CLI ⚡⚡⚡⚡⚡
 
 ---
 
 ## Installation ⚡
 
-### Option 1 – Move binary to PATH (recommended)
+### Step 1 - Clone the repository
 
 ```bash
 git clone https://github.com/yourusername/WarmLoader.git
+```
+
+### Step 2 - Building
+
+```bash
 cd WarmLoader
 mkdir build && cd build
 cmake ..
 make
-sudo cp warmloader /usr/local/bin/
+```
 
+### Step 3 – Move binary to PATH
+
+```bash
+sudo cp warmloader /usr/local/bin/
+```
+
+## Usage 📦
+
+### Simply run it from your project's root directory
+```bash
+warmloader <file or directory> --build <your build command> --run <your run command>
+```
