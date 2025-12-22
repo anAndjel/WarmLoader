@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/alex/coding/WarmLoader/build",
-  "command": "/usr/bin/c++  -I/home/alex/coding/WarmLoader/cxx_std_23 -g -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -o CMakeFiles/warmloader.dir/src/main.cpp.o -c /home/alex/coding/WarmLoader/src/main.cpp",
-  "file": "/home/alex/coding/WarmLoader/src/main.cpp",
-  "output": "CMakeFiles/warmloader.dir/src/main.cpp.o"
-}
-]

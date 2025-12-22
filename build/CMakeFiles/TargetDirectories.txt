@@ -1,3 +1,0 @@
-/home/alex/coding/WarmLoader/build/CMakeFiles/warmloader.dir
-/home/alex/coding/WarmLoader/build/CMakeFiles/edit_cache.dir
-/home/alex/coding/WarmLoader/build/CMakeFiles/rebuild_cache.dir
