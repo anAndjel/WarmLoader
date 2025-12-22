@@ -10,7 +10,7 @@
 - 🟡 **Debounced changes** – avoids multiple rebuilds on rapid edits  
 - 🔹 Works with **custom build and run commands** (`--build`, `--run`)  
 - 🔹 **Directory or file watching** (supports recursive watching)  
-- 🔹 Blazzing fast lightweight C++ CLI
+- 🔹 Blazzing fast lightweight C++ CLI ⚡⚡⚡⚡⚡
 
 ---
 
