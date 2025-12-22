@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Wl,--dependency-file=CMakeFiles/warmloader.dir/link.d CMakeFiles/warmloader.dir/src/main.cpp.o -o warmloader
