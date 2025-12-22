@@ -81,7 +81,8 @@ int main(int argc, char **argv) {
       std::cout << red("[WarmLoader] ") << "Building...\n";
       if (running_pid > 0) {
         kill(running_pid, SIGTERM);
-        waitpid(running_pid, nullptr, 0);
+        int status;
+        waitpid(running_pid, &status, 0);
       }
       int code = system(build_cmd.c_str());
       if (code != 0) {
@@ -89,18 +90,19 @@ int main(int argc, char **argv) {
         return 1;
       }
       pid_t pid = fork();
-      if (pid >= 0) {
+      if (pid == 0) {
+        execl("/bin/sh", "sh", "-c", run_cmd.c_str(), nullptr);
+        perror("execl failed");
+        _exit(1);
+      } else if (pid > 0) {
         running_pid = pid;
         std::cout << red("[WarmLoader] ") << "Running...\n";
-        execl("/bin/sh", "sh", "-c", run_cmd.c_str(), nullptr);
-      }
-      if (running_pid <= 0) {
+      } else {
         std::cerr << red("[WarmLoader] Running failed boohoo :(\n");
         return 1;
       }
     }
     usleep(100000); // 100ms
   }
-
   return 0;
 }
