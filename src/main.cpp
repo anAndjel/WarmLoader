@@ -4,13 +4,17 @@
 #include <filesystem>
 #include <iostream>
 #include <signal.h>
+#include <string>
 #include <sys/inotify.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <unordered_set>
+
 inline std::string red(const std::string &msg) {
   return "\033[1;31m" + msg + "\033[0m";
 }
 namespace fs = std::filesystem;
+using namespace std::chrono_literals;
 
 void add_watch_recursive(int fd, const fs::path &root, uint32_t mask) {
   for (const auto &entry : fs::recursive_directory_iterator(root)) {
@@ -52,7 +56,7 @@ int main(int argc, char **argv) {
   }
 
   int fd = inotify_init1(IN_NONBLOCK);
-  uint32_t mask = IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVED_TO;
+  uint32_t mask = IN_CLOSE_WRITE | IN_CREATE | IN_DELETE | IN_MOVED_TO;
   if (fs::is_directory(target)) {
     add_watch_recursive(fd, target, mask);
   } else {
@@ -66,42 +70,62 @@ int main(int argc, char **argv) {
   auto last = clock::now();
   bool dirty = false;
 
+  std::unordered_set<std::string> modified_files;
+
   while (true) {
-    int len = read(fd, buf, sizeof(buf));
-    if (len > 0) {
-      dirty = true;
+    int len;
+    while ((len = read(fd, buf, sizeof(buf))) > 0) {
+      int i = 0;
+      while (i < len) {
+        struct inotify_event *event = (struct inotify_event *)&buf[i];
+        if (event->len > 0) {
+          fs::path full_path = target / event->name;
+          modified_files.insert(full_path.string());
+        }
+        i += sizeof(struct inotify_event) + event->len;
+      }
       last = clock::now();
+      dirty = true;
     }
 
+    // debounce
     if (dirty && std::chrono::duration_cast<std::chrono::milliseconds>(
                      clock::now() - last)
-                         .count() > 300) {
+                         .count() > 700) {
       dirty = false;
-      std::cout << red("[WarmLoader] ") << "Change detected!\n";
-      std::cout << red("[WarmLoader] ") << "Building...\n";
-      if (running_pid > 0) {
-        kill(running_pid, SIGTERM);
-        int status;
-        waitpid(running_pid, &status, 0);
-      }
-      int code = system(build_cmd.c_str());
-      if (code != 0) {
-        std::cerr << red("[WarmLoader] Build failed boohoo :(\n");
-        return 1;
-      }
-      pid_t pid = fork();
-      if (pid == 0) {
-        execl("/bin/sh", "sh", "-c", run_cmd.c_str(), nullptr);
-        perror("execl failed");
-        _exit(1);
-      } else if (pid > 0) {
-        running_pid = pid;
-        std::cout << red("[WarmLoader] ") << "Running...\n";
-      } else {
-        std::cerr << red("[WarmLoader] Running failed boohoo :(\n");
-        return 1;
+
+      if (!modified_files.empty()) {
+        std::cout << red("[WarmLoader] ") << "Change detected!\n";
+        std::cout << red("[WarmLoader] ") << "Building...\n";
+
+        if (running_pid > 0) {
+          kill(running_pid, SIGTERM);
+          waitpid(running_pid, nullptr, 0);
+        }
+
+        int code = system(build_cmd.c_str());
+        if (code != 0) {
+          std::cerr << red("[WarmLoader] Build failed :(\n");
+          modified_files.clear();
+          continue;
+        }
+
+        pid_t pid = fork();
+        if (pid == 0) {
+          execl("/bin/sh", "sh", "-c", run_cmd.c_str(), nullptr);
+          perror("execl failed");
+          _exit(1);
+        } else if (pid > 0) {
+          running_pid = pid;
+          std::cout << red("[WarmLoader] ") << "Running...\n";
+        } else {
+          perror("fork failed");
+        }
+
+        modified_files.clear(); // reset for next batch
       }
     }
+
     usleep(100000); // 100ms
   }
   return 0;
