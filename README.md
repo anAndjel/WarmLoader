@@ -21,7 +21,9 @@ Spend less time building and more time creating. 💻✨
 
 ### 1️⃣ Clone the repository
 
-`git clone [https://github.com/anAndjel/WarmLoader.git](https://github.com/anAndjel/WarmLoader.git)`
+```bash
+git clone [https://github.com/anAndjel/WarmLoader.git](https://github.com/anAndjel/WarmLoader.git)
+```
 
 ### 2️⃣ Build WarmLoader
 
@@ -34,7 +36,9 @@ make
 
 ### 3️⃣ Move the binary into your PATH
 
-`sudo cp warmloader /usr/local/bin/`
+```bash
+sudo cp warmloader /usr/local/bin/
+```
 
 Now you can run `warmloader` from anywhere in your system.
 
@@ -46,11 +50,15 @@ Now you can run `warmloader` from anywhere in your system.
 
 From your project's root directory:
 
-`warmloader <file-or-directory> --build <build-script> --run <run-script>`
+```bash
+warmloader <file-or-directory> --build <build-script> --run <run-script>
+```
 
 **Example:**
 
-`warmloader src/ --build ./build.sh --run ./run.sh`
+```bash
+warmloader src/ --build ./build.sh --run ./run.sh
+```
 
 **Parameters:**
 
@@ -64,7 +72,9 @@ WarmLoader will automatically detect changes, rebuild your project, and restart 
 
 ### Help
 
-`warmloader --help`
+```bash
+warmloader --help
+```
 
 Displays usage instructions and available options.
 
