@@ -22,7 +22,7 @@ Spend less time building and more time creating. 💻✨
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone [https://github.com/anAndjel/WarmLoader.git](https://github.com/anAndjel/WarmLoader.git)
+git clone https://github.com/anAndjel/WarmLoader.git
 ```
 
 ### 2️⃣ Build WarmLoader
