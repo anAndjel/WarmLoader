@@ -40,6 +40,10 @@ sudo cp warmloader /usr/local/bin/
 ## Usage 📦
 
 ### Simply run it from your project's root directory
+
+- Must be used it with a build.sh and run.sh
+- Must be ran from the project root direcotry
+
 ```bash
-warmloader <file or directory> --build <your build command> --run <your run command>
+warmloader <file or directory> --build <your build.sh script> --run <your run.sh script>
 ```
