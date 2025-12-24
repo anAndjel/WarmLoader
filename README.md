@@ -46,7 +46,7 @@ Now you can run `warmloader` from anywhere in your system.
 
 From your project's root directory:
 
-`warmloader <file-or-directory> --build <build-script> --run <run-script>``
+`warmloader <file-or-directory> --build <build-script> --run <run-script>`
 
 **Example:**
 
