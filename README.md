@@ -47,3 +47,10 @@ sudo cp warmloader /usr/local/bin/
 ```bash
 warmloader <file or directory> --build <your build.sh script> --run <your run.sh script>
 ```
+Now, every time you save your project, WarmLoader will build it
+and run it for you!
+
+WarmLoader does not need any relaunching as it kills and rebuilds
+your project. Meaning, you can go on infinitely!
+
+WarmLoader - Spend less time building and more time creating.
