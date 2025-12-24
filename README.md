@@ -21,18 +21,20 @@ Spend less time building and more time creating. 💻✨
 
 ### 1️⃣ Clone the repository
 
-git clone [https://github.com/yourusername/WarmLoader.git](https://github.com/yourusername/WarmLoader.git)
+`git clone [https://github.com/anAndjel/WarmLoader.git](https://github.com/anAndjel/WarmLoader.git)`
 
 ### 2️⃣ Build WarmLoader
 
+```bash
 cd WarmLoader
 mkdir build && cd build
 cmake ..
 make
+```
 
 ### 3️⃣ Move the binary into your PATH
 
-sudo cp warmloader /usr/local/bin/
+`sudo cp warmloader /usr/local/bin/`
 
 Now you can run `warmloader` from anywhere in your system.
 
@@ -44,11 +46,11 @@ Now you can run `warmloader` from anywhere in your system.
 
 From your project's root directory:
 
-warmloader <file-or-directory> --build <build-script> --run <run-script>
+`warmloader <file-or-directory> --build <build-script> --run <run-script>``
 
 **Example:**
 
-warmloader src/ --build ./build.sh --run ./run.sh
+`warmloader src/ --build ./build.sh --run ./run.sh`
 
 **Parameters:**
 
@@ -62,7 +64,7 @@ WarmLoader will automatically detect changes, rebuild your project, and restart 
 
 ### Help
 
-warmloader --help
+`warmloader --help`
 
 Displays usage instructions and available options.
 
@@ -98,7 +100,3 @@ Displays usage instructions and available options.
 ---
 
 WarmLoader — **your project, always running, always up-to-date.** 💻✨
-
----
-
-Do you want me to **also add a ready-to-copy “Getting Started Example” section** with a minimal C++ project and scripts? It would make the README fully hands-on.
