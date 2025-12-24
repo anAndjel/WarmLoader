@@ -12,8 +12,7 @@ Spend less time building and more time creating. 💻✨
 * 🟡 **Debounced detection** – avoids multiple rebuilds on rapid edits
 * 🔹 Works with **custom build and run commands** (`--build`, `--run`)
 * 🔹 **Directory or file watching** (supports recursive watching)
-* ⚡ **Lightweight C++ CLI** – minimal dependencies, maximum speed
-* 🐈 Cat-proof… well, almost 😼 (watch those cables!)
+* ⚡ **Lightweight C++ CLI** – minimal dependencies, blazzing fast ⚡⚡⚡
 
 ---
 
